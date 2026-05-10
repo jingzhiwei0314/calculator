@@ -345,7 +345,11 @@ class _RoundBtn extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           customBorder: const CircleBorder(),
-          onTap: onTap,
+          onTap: () {
+            SystemSound.play(SystemSoundType.click);
+            HapticFeedback.lightImpact();
+            onTap();
+          },
           child: Center(
             child: Text(
               label,
@@ -384,7 +388,11 @@ class _EqualBtn extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           borderRadius: BorderRadius.circular(30),
-          onTap: onTap,
+          onTap: () {
+            SystemSound.play(SystemSoundType.click);
+            HapticFeedback.lightImpact();
+            onTap();
+          },
           child: const Center(
             child: Text(
               '等于',
