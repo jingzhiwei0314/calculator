@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="calculator">
+    <view class="screen">{{display}}</view>
+
+    <view class="row">
+      <button class="btn clear" hover-class="btn-hover" bindtap="onClear">C</button>
+      <button class="btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="/">÷</button>
+      <button class="btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="*">×</button>
+      <button class="btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="-">-</button>
+    </view>
+
+    <view class="row">
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="7">7</button>
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="8">8</button>
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="9">9</button>
+      <button class="btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="+">+</button>
+    </view>
+
+    <view class="row">
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="4">4</button>
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="5">5</button>
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="6">6</button>
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch=".">.</button>
+    </view>
+
+    <view class="row">
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="1">1</button>
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="2">2</button>
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="3">3</button>
+      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="0">0</button>
+    </view>
+
+    <view class="equal-row">
+      <button class="btn equal" hover-class="btn-hover-equal" bindtap="onEquals">等于</button>
+    </view>
+  </view>
+</view>

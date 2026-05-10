@@ -1,0 +1,11 @@
+{
+  "pages": ["pages/index/index"],
+  "window": {
+    "navigationBarTitleText": "蓝色可爱小朋友计算器",
+    "navigationBarBackgroundColor": "#87CEFA",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#87CEFA"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
