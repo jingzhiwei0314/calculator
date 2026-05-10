@@ -1,7 +1,5 @@
-# Flutter CI：Web、Android APK、iOS 未签名 IPA（供爱思助手等工具自行签名）。
-#
-# iOS：不在 GitHub 上使用 Apple 证书；产物为「未签名 IPA」结构（Payload/Runner.app），
-# 下载后在 Windows 上用爱思助手导入并自签名安装。
+# 默认：push / PR 仅编译 iOS 未签名 IPA（爱思助手自签）。
+# 手动运行（Actions → Flutter CI → Run workflow）可勾选是否额外编译 APK、Web 与分析测试。
 name: Flutter CI
 
 on:
@@ -10,9 +8,24 @@ on:
   pull_request:
     branches: [main, master]
   workflow_dispatch:
+    inputs:
+      build_ios_ipa:
+        description: 编译 iOS 未签名 IPA（unsigned-ipa-for-aisi）
+        type: boolean
+        default: true
+      build_apk:
+        description: 编译 Android release APK
+        type: boolean
+        default: false
+      web_analyze_test:
+        description: flutter analyze、test、build web
+        type: boolean
+        default: false
 
 jobs:
+  # 仅在工作流手动触发且勾选时运行
   analyze-test-web:
+    if: github.event_name == 'workflow_dispatch' && inputs.web_analyze_test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -31,6 +44,7 @@ jobs:
       - run: flutter build web --release
 
   build-apk:
+    if: github.event_name == 'workflow_dispatch' && inputs.build_apk
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -58,8 +72,11 @@ jobs:
           name: release-apk
           path: blue_cute_calculator/build/app/outputs/flutter-apk/app-release.apk
 
-  # 未签名 IPA：爱思助手「导入 IPA / 签名」使用（无需仓库里配置 Apple Secrets）。
   ios-unsigned-ipa:
+    if: |
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' && inputs.build_ios_ipa)
     runs-on: macos-latest
     defaults:
       run:
