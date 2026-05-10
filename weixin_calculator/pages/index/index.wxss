@@ -41,21 +41,28 @@
 .equal-row {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-top: 20rpx;
 }
 
+/* 宽高必须一致才是正圆；百分比宽度 + 固定高度 rpx 会拉成椭圆 */
 .btn {
-  flex: 0 0 22%;
-  width: 22%;
-  height: 160rpx;
+  flex-shrink: 0;
+  width: 136rpx;
+  height: 136rpx;
+  min-width: 136rpx;
+  min-height: 136rpx;
   border-radius: 50%;
   border: none;
   padding: 0;
   margin: 10rpx 0;
-  font-size: 60rpx;
+  font-size: 56rpx;
   font-weight: bold;
-  line-height: 160rpx;
+  line-height: normal;
   box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn::after {
@@ -78,12 +85,17 @@
 }
 
 .equal {
-  flex: 0 0 46%;
-  width: 46%;
-  border-radius: 60rpx !important;
+  width: 296rpx;
+  height: 136rpx;
+  min-height: 136rpx;
+  border-radius: 68rpx !important;
   background-color: #0077dd;
   color: #ffffff;
-  font-size: 64rpx;
+  font-size: 60rpx;
+  line-height: normal;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-hover {

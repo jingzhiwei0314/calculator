@@ -1,7 +1,7 @@
 {
   "pages": ["pages/index/index"],
   "window": {
-    "navigationBarTitleText": "蓝色可爱小朋友计算器",
+    "navigationBarTitleText": "不算错小姐",
     "navigationBarBackgroundColor": "#87CEFA",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#87CEFA"
