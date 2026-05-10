@@ -2,36 +2,47 @@
   <view class="calculator">
     <view class="screen">{{display}}</view>
 
-    <view class="row">
-      <button class="btn clear" hover-class="btn-hover" bindtap="onClear">C</button>
-      <button class="btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="/">÷</button>
-      <button class="btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="*">×</button>
-      <button class="btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="-">-</button>
-    </view>
+    <view class="keypad">
+      <view class="row">
+        <view class="tap btn clear" hover-class="btn-hover" bindtap="onClear">C</view>
+        <view class="tap btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="/">÷</view>
+        <view class="tap btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="*">×</view>
+        <view class="tap btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="-">-</view>
+      </view>
 
-    <view class="row">
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="7">7</button>
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="8">8</button>
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="9">9</button>
-      <button class="btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="+">+</button>
-    </view>
+      <view class="row">
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="7">7</view>
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="8">8</view>
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="9">9</view>
+        <view class="tap btn op" hover-class="btn-hover" bindtap="onAppend" data-ch="+">+</view>
+      </view>
 
-    <view class="row">
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="4">4</button>
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="5">5</button>
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="6">6</button>
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch=".">.</button>
-    </view>
+      <view class="row">
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="4">4</view>
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="5">5</view>
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="6">6</view>
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch=".">.</view>
+      </view>
 
-    <view class="row">
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="1">1</button>
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="2">2</button>
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="3">3</button>
-      <button class="btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="0">0</button>
-    </view>
+      <view class="row">
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="1">1</view>
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="2">2</view>
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="3">3</view>
+        <view class="tap btn num" hover-class="btn-hover" bindtap="onAppend" data-ch="0">0</view>
+      </view>
 
-    <view class="equal-row">
-      <button class="btn equal" hover-class="btn-hover-equal" bindtap="onEquals">等于</button>
+      <view class="row row-equal">
+        <view class="row-equal-spacer"></view>
+        <view
+          class="tap btn equal"
+          hover-class="btn-hover-equal"
+          bindtap="onEquals"
+          style="grid-column: 2 / span 2"
+        >
+          等于
+        </view>
+        <view class="row-equal-spacer"></view>
+      </view>
     </view>
   </view>
 </view>

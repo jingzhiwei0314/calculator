@@ -9,11 +9,13 @@
 
 .calculator {
   width: 92%;
+  max-width: 100%;
   background-color: #e6f4ff;
-  padding: 50rpx;
+  padding: 40rpx 32rpx;
   border-radius: 70rpx;
   box-shadow: 0 0 30rpx #55a8ee;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .screen {
@@ -30,43 +32,51 @@
   box-sizing: border-box;
 }
 
-.row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10rpx;
-}
-
-.equal-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20rpx;
-}
-
-/* 宽高必须一致才是正圆；百分比宽度 + 固定高度 rpx 会拉成椭圆 */
-.btn {
-  flex-shrink: 0;
-  width: 136rpx;
-  height: 136rpx;
-  min-width: 136rpx;
-  min-height: 136rpx;
-  border-radius: 50%;
-  border: none;
-  padding: 0;
-  margin: 10rpx 0;
-  font-size: 56rpx;
-  font-weight: bold;
-  line-height: normal;
+.keypad {
+  width: 100%;
   box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.btn::after {
-  border: none;
+/* 四列等分，防止右侧被裁切、防止键被拉成椭圆 */
+.row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 16rpx;
+  margin-bottom: 16rpx;
+  align-items: center;
+}
+
+.row-equal {
+  margin-bottom: 0;
+}
+
+.row-equal-spacer {
+  min-height: 1rpx;
+  pointer-events: none;
+}
+
+/* 圆形键：列宽即直径，aspect-ratio 保证高与宽相等 */
+.tap.btn {
+  width: 100%;
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 54rpx;
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* 跨两列 + 中间缝，与 HTML 里两圆加间距同宽；高度与圆键直径一致 */
+.tap.btn.equal {
+  aspect-ratio: auto;
+  width: auto;
+  height: calc((100% - 48rpx) / 4);
+  border-radius: 999rpx;
+  margin-top: 0;
+  font-size: 58rpx;
 }
 
 .num {
@@ -85,17 +95,8 @@
 }
 
 .equal {
-  width: 296rpx;
-  height: 136rpx;
-  min-height: 136rpx;
-  border-radius: 68rpx !important;
   background-color: #0077dd;
   color: #ffffff;
-  font-size: 60rpx;
-  line-height: normal;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn-hover {
