@@ -1,19 +1,7 @@
-# Flutter CI：Web、Android APK、iOS 无签名编译校验、带签名的 IPA。
+# Flutter CI：Web、Android APK、iOS 未签名 IPA（供爱思助手等工具自行签名）。
 #
-# IPA 需在仓库 Settings → Secrets and variables → Actions 中配置（Repository secrets）：
-#   APPLE_CERTIFICATE_BASE64      — 分发或开发用 .p12 的 Base64
-#   APPLE_CERTIFICATE_PASSWORD    — .p12 密码
-#   APPLE_PROVISION_PROFILE_BASE64 — 与 Bundle ID 匹配的 .mobileprovision 的 Base64
-#   APPLE_PROVISIONING_PROFILE_NAME — 描述文件在 Apple 开发者站点的「名称」(Provisioning Profile Name)
-#   APPLE_TEAM_ID                 — 10 位 Team ID
-#   APPLE_KEYCHAIN_PASSWORD       — 可选；临时钥匙串密码，不填则随机生成
-#   APPLE_EXPORT_METHOD           — 可选；app-store | ad-hoc | enterprise | development，默认 ad-hoc
-#
-# Base64 示例（本机）:
-#   base64 -i cert.p12 | pbcopy
-#   base64 -i profile.mobileprovision | pbcopy
-#
-# 当前 Bundle ID：com.example.blueCuteCalculator（上架前请改为你在开发者账号中注册的 ID）。
+# iOS：不在 GitHub 上使用 Apple 证书；产物为「未签名 IPA」结构（Payload/Runner.app），
+# 下载后在 Windows 上用爱思助手导入并自签名安装。
 name: Flutter CI
 
 on:
@@ -70,8 +58,8 @@ jobs:
           name: release-apk
           path: blue_cute_calculator/build/app/outputs/flutter-apk/app-release.apk
 
-  # 不依赖证书：验证 iOS 工程可在 Xcode 链路下完成 Release 编译。
-  ios-build-nosign:
+  # 未签名 IPA：爱思助手「导入 IPA / 签名」使用（无需仓库里配置 Apple Secrets）。
+  ios-unsigned-ipa:
     runs-on: macos-latest
     defaults:
       run:
@@ -91,99 +79,35 @@ jobs:
           cd ios
           pod install
 
-      - run: flutter build ios --release --no-codesign
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
 
-  # 需要上方列出的 Apple 密钥；未配置时本 job 会失败并提示。
-  build-ipa:
-    runs-on: macos-latest
-    defaults:
-      run:
-        working-directory: blue_cute_calculator
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Check Apple signing secrets
-        env:
-          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
-          APPLE_PROVISIONING_PROFILE_NAME: ${{ secrets.APPLE_PROVISIONING_PROFILE_NAME }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: |
-          missing() { echo "::error::缺少 GitHub Secret: $1（见本 workflow 文件顶部说明）"; }
-          test -n "$APPLE_CERTIFICATE_BASE64" || { missing APPLE_CERTIFICATE_BASE64; exit 1; }
-          test -n "$APPLE_CERTIFICATE_PASSWORD" || { missing APPLE_CERTIFICATE_PASSWORD; exit 1; }
-          test -n "$APPLE_PROVISION_PROFILE_BASE64" || { missing APPLE_PROVISION_PROFILE_BASE64; exit 1; }
-          test -n "$APPLE_PROVISIONING_PROFILE_NAME" || { missing APPLE_PROVISIONING_PROFILE_NAME; exit 1; }
-          test -n "$APPLE_TEAM_ID" || { missing APPLE_TEAM_ID; exit 1; }
-
-      - run: flutter pub get
-
-      - name: CocoaPods
-        run: |
-          cd ios
-          pod install
-
-      - name: Import to keychain and install profile
-        env:
-          APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
-          APPLE_KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+      - name: Pack unsigned IPA for 爱思助手
         run: |
           set -e
-          KEYCHAIN_PASSWORD="${APPLE_KEYCHAIN_PASSWORD:-$(openssl rand -base64 24)}"
-          CERT_PATH="$RUNNER_TEMP/signing.p12"
-          PP_PATH="$RUNNER_TEMP/app.mobileprovision"
-          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
-          python3 -c "import base64,os,pathlib; p='$CERT_PATH'; pathlib.Path(p).write_bytes(base64.standard_b64decode(os.environ['APPLE_CERTIFICATE_BASE64'].strip()))"
-          python3 -c "import base64,os,pathlib; p='$PP_PATH'; pathlib.Path(p).write_bytes(base64.standard_b64decode(os.environ['APPLE_PROVISION_PROFILE_BASE64'].strip()))"
-          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security import "$CERT_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
-          security list-keychain -d user -s "$KEYCHAIN_PATH"
-          security default-keychain -s "$KEYCHAIN_PATH"
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          PP_PLIST=$(mktemp)
-          security cms -D -i "$PP_PATH" > "$PP_PLIST"
-          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print UUID' "$PP_PLIST")
-          cp "$PP_PATH" ~/Library/MobileDevice/Provisioning\ Profiles/"$PROFILE_UUID".mobileprovision
-
-      - name: Write ExportOptions.plist
-        env:
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          APPLE_PROVISIONING_PROFILE_NAME: ${{ secrets.APPLE_PROVISIONING_PROFILE_NAME }}
-          APPLE_EXPORT_METHOD: ${{ secrets.APPLE_EXPORT_METHOD }}
-        run: |
-          python3 << 'PY'
-          import os
-          import plistlib
-
-          method = (os.environ.get("APPLE_EXPORT_METHOD") or "ad-hoc").strip()
-          data = {
-              "method": method,
-              "teamID": os.environ["APPLE_TEAM_ID"],
-              "signingStyle": "manual",
-              "provisioningProfiles": {
-                  "com.example.blueCuteCalculator": os.environ["APPLE_PROVISIONING_PROFILE_NAME"],
-              },
-          }
-          with open("ios/ExportOptionsCI.plist", "wb") as f:
-              plistlib.dump(data, f, fmt=plistlib.FMT_XML)
-          PY
-
-      - name: Build IPA
-        run: |
-          flutter build ipa --release --export-options-plist=ios/ExportOptionsCI.plist
+          ROOT="$PWD"
+          APP=""
+          for candidate in "build/ios/iphoneos/Runner.app" "build/ios/Release-iphoneos/Runner.app"; do
+            if [ -d "$candidate" ]; then APP="$candidate"; break; fi
+          done
+          if [ -z "$APP" ]; then
+            APP=$(find build/ios -maxdepth 6 -name "Runner.app" -type d 2>/dev/null | head -1)
+          fi
+          if [ -z "$APP" ] || [ ! -d "$APP" ]; then
+            echo "::error::找不到 Runner.app，请查看 Flutter 输出目录是否变更"
+            find build/ios -type d -name "*.app" 2>/dev/null || true
+            exit 1
+          fi
+          echo "Using APP=$APP"
+          STAGE="$RUNNER_TEMP/ipa_stage"
+          rm -rf "$STAGE"
+          mkdir -p "$STAGE/Payload"
+          cp -R "$APP" "$STAGE/Payload/"
+          cd "$STAGE"
+          zip -qry "$ROOT/unsigned-for-aisi.ipa" Payload
+          ls -la "$ROOT/unsigned-for-aisi.ipa"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: release-ipa
-          path: blue_cute_calculator/build/ios/ipa/*.ipa
+          name: unsigned-ipa-for-aisi
+          path: blue_cute_calculator/unsigned-for-aisi.ipa
