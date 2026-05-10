@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝色可爱小朋友计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* 整片都是蓝蓝的涂色背景 */
+            background-color: #87CEFA;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: sans-serif;
+        }
+
+        /* 计算器大框 圆圆蓝蓝 */
+        .calculator {
+            width: 92vw;
+            background-color: #E6F4FF;
+            padding: 25px;
+            border-radius: 35px;
+            box-shadow: 0 0 15px #55a8ee;
+        }
+
+        /* 蓝色大屏幕 */
+        .screen {
+            width: 100%;
+            height: 110px;
+            background-color: #ffffff;
+            border-radius: 25px;
+            border: none;
+            font-size: 42px;
+            text-align: right;
+            padding-right: 20px;
+            margin-bottom: 20px;
+            color: #0066cc;
+        }
+
+        /* 全部按钮 圆形 蓝色系 */
+        button {
+            width: 22%;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            font-size: 30px;
+            font-weight: bold;
+            margin: 5px 1%;
+        }
+
+        /* 数字按钮 浅蓝涂色 */
+        .num {
+            background-color: #b3d9ff;
+            color: #0055aa;
+        }
+
+        /* 符号按钮 深蓝 */
+        .op {
+            background-color: #66b2ff;
+            color: white;
+        }
+
+        /* 清空按钮 天蓝 */
+        .clear {
+            background-color: #3399ff;
+            color: white;
+        }
+
+        /* 等于按钮 大大圆圆的蓝 */
+        .equal {
+            width: 46% !important;
+            border-radius: 30px !important;
+            background-color: #0077dd;
+            color: white;
+            font-size: 32px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <input type="text" class="screen" id="showVal" readonly>
+
+    <div>
+        <button class="clear" onclick="clearAll()">C</button>
+        <button class="op" onclick="addChar('/')">÷</button>
+        <button class="op" onclick="addChar('*')">×</button>
+        <button class="op" onclick="addChar('-')">-</button>
+    </div>
+
+    <div>
+        <button class="num" onclick="addChar('7')">7</button>
+        <button class="num" onclick="addChar('8')">8</button>
+        <button class="num" onclick="addChar('9')">9</button>
+        <button class="op" onclick="addChar('+')">+</button>
+    </div>
+
+    <div>
+        <button class="num" onclick="addChar('4')">4</button>
+        <button class="num" onclick="addChar('5')">5</button>
+        <button class="num" onclick="addChar('6')">6</button>
+        <button class="num" onclick="addChar('.')">.</button>
+    </div>
+
+    <div>
+        <button class="num" onclick="addChar('1')">1</button>
+        <button class="num" onclick="addChar('2')">2</button>
+        <button class="num" onclick="addChar('3')">3</button>
+        <button class="num" onclick="addChar('0')">0</button>
+    </div>
+
+    <div style="text-align:center;margin-top:10px;">
+        <button class="equal" onclick="calcResult()">等于</button>
+    </div>
+</div>
+
+<script>
+function addChar(c){
+    document.getElementById('showVal').value += c;
+}
+function clearAll(){
+    document.getElementById('showVal').value = '';
+}
+function calcResult(){
+    try{
+        let res = eval(document.getElementById('showVal').value);
+        document.getElementById('showVal').value = res;
+    }catch{
+        document.getElementById('showVal').value = '错啦';
+    }
+}
+</script>
+
+</body>
+</html>
